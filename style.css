@@ -1,0 +1,262 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+}
+
+body {
+  background: #cfa876;
+}
+
+/* ---------- corkboard ---------- */
+
+.board {
+  position: relative;
+  min-height: 100vh;
+  padding: 60px 20px 100px;
+  background-color: #c19a6b;
+  background-image: url("assets/cork-bg.jpg");
+  background-size: 1000px 562px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.board::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ---------- scattered folder field ---------- */
+
+.field {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 40px 16px 70px;
+}
+
+.pos-intro { --top: 20px; --left: 50%; --rot: 3deg; }
+.pos-1     { --top: 140px; --left: 20%; --rot: -15deg; }
+.pos-2     { --top: 75px; --left: 80%; --rot: 17deg; }
+.pos-3     { --top: 440px; --left: 18%; --rot: 11deg; }
+.pos-4     { --top: 390px; --left: 47%; --rot: -18deg; }
+.pos-5     { --top: 470px; --left: 82%; --rot: -9deg; }
+.pos-6     { --top: 760px; --left: 20%; --rot: 15deg; }
+.pos-7     { --top: 810px; --left: 58%; --rot: -13deg; }
+.pos-8     { --top: 720px; --left: 82%; --rot: 8deg; }
+.pos-video { --top: 1080px; --left: 50%; --rot: -2deg; }
+
+@media (min-width: 760px) {
+  .field {
+    display: block;
+    height: 1820px;
+    padding: 0 16px;
+  }
+
+  .field .folder {
+    position: absolute;
+    top: var(--top);
+    left: var(--left);
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- decorative pinned items ---------- */
+
+.deco {
+  position: absolute;
+  pointer-events: none;
+  width: 100px;
+  filter: drop-shadow(3px 5px 6px rgba(0, 0, 0, 0.3));
+}
+
+.sticky--a {
+  top: 36px;
+  left: 5%;
+  transform: rotate(-9deg);
+}
+
+.sticky--b {
+  top: 50px;
+  right: 6%;
+  width: 84px;
+  transform: rotate(8deg);
+}
+
+.sticky--c { top: 160px; left: 3%; width: 78px; transform: rotate(11deg); }
+.sticky--d { top: 190px; right: 3%; width: 90px; transform: rotate(-7deg); }
+.sticky--e { top: 520px; left: 3%; width: 88px; transform: rotate(-10deg); }
+.sticky--f { top: 540px; right: 3%; width: 76px; transform: rotate(9deg); }
+.sticky--g { top: 850px; left: 4%; width: 82px; transform: rotate(6deg); }
+.sticky--h { top: 870px; right: 4%; width: 94px; transform: rotate(-9deg); }
+
+@media (max-width: 900px) {
+  .sticky--c, .sticky--d, .sticky--e, .sticky--f, .sticky--g, .sticky--h {
+    display: none;
+  }
+}
+
+.notebook {
+  top: 24px;
+  right: 32%;
+  width: 130px;
+  transform: rotate(-5deg);
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .notebook {
+    display: block;
+  }
+}
+
+/* ---------- folder base ---------- */
+
+.folder {
+  position: relative;
+  filter: drop-shadow(7px 12px 10px rgba(0, 0, 0, 0.45));
+  transition: z-index 0.3s ease;
+}
+
+.folder.is-open {
+  z-index: 5;
+}
+
+.folder-tilt {
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.3s ease;
+}
+
+.folder.is-open .folder-tilt {
+  transform: rotate(0deg);
+}
+
+.folder--sm { width: 170px; }
+.folder--md { width: 210px; }
+.folder--xl { width: 310px; }
+.folder--video { width: min(92vw, 580px); }
+
+.folder-cover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 471 / 527;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  background-color: transparent;
+  background-image: var(--folder-img, url("assets/folder-closed.png"));
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: var(--folder-filter, none);
+  transition: transform 0.3s ease, filter 0.3s ease;
+  transform-origin: top center;
+}
+
+.folder--b .folder-cover,
+.folder--e .folder-cover {
+  aspect-ratio: 351 / 389;
+  background-image: url("assets/folder-kraft.png");
+}
+
+.folder-label {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(14px, 2.6vw, 20px);
+  color: #4a3a22;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 6px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.folder--xl .folder-label,
+.folder--video .folder-label {
+  font-size: clamp(16px, 3vw, 24px);
+}
+
+.folder.is-open .folder-cover {
+  transform: rotateX(-20deg) translateY(-4px);
+}
+
+/* ---------- folder color variants (tint the same closed-folder photo) ---------- */
+
+.folder--a { --folder-filter: none; }
+.folder--b { --folder-filter: none; }
+.folder--c { --folder-filter: hue-rotate(68deg) saturate(1.15) brightness(0.97); }
+.folder--d { --folder-filter: hue-rotate(255deg) saturate(1.5) brightness(1.05); }
+.folder--e { --folder-filter: hue-rotate(150deg) saturate(1.3) brightness(0.95); }
+.folder--intro { --folder-filter: hue-rotate(-18deg) saturate(1.6) brightness(1.02); }
+.folder--video-style { --folder-filter: hue-rotate(150deg) saturate(1.5) brightness(0.85); }
+
+/* ---------- inside content ---------- */
+
+.folder-inside {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding: 0 10px;
+  border-radius: 4px;
+  background-image: var(--backdrop-img, none);
+  background-size: cover;
+  background-position: center;
+  transition: max-height 0.45s ease, opacity 0.35s ease 0.05s, margin-top 0.45s ease;
+}
+
+.folder.is-open .folder-inside {
+  max-height: 640px;
+  opacity: 1;
+  margin-top: 14px;
+  padding: 12px 10px;
+}
+
+.folder--backdrop-papers { --backdrop-img: url("assets/folder-open-papers.png"); }
+.folder--backdrop-notebook { --backdrop-img: url("assets/notebook-open.png"); }
+
+.media-slot {
+  background: rgba(253, 250, 243, 0.92);
+  border: 2px dashed #b79b6b;
+  border-radius: 6px;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a7350;
+  font-size: 14px;
+  text-transform: lowercase;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.media-slot--video {
+  aspect-ratio: 16 / 9;
+  min-height: 160px;
+}
+
+.response-text {
+  background: #fffef8;
+  border: 1px solid #d8c9a3;
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin: 10px 0 0;
+  color: #4a3a22;
+  font-size: 14px;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.12);
+}
