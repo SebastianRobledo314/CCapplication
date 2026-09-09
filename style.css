@@ -128,11 +128,12 @@ body {
 .folder {
   position: relative;
   filter: drop-shadow(7px 12px 10px rgba(0, 0, 0, 0.45));
-  transition: z-index 0.3s ease;
+  transition: z-index 0.3s ease, min-width 0.35s ease;
 }
 
 .folder.is-open {
   z-index: 5;
+  min-width: min(92vw, 380px);
 }
 
 .folder-tilt {
@@ -222,7 +223,7 @@ body {
 }
 
 .folder.is-open .folder-inside {
-  max-height: 640px;
+  max-height: 2200px;
   opacity: 1;
   margin-top: 14px;
   padding: 12px 10px;
@@ -230,6 +231,31 @@ body {
 
 .folder--backdrop-papers { --backdrop-img: url("assets/folder-open-papers.png"); }
 .folder--backdrop-notebook { --backdrop-img: url("assets/notebook-open.png"); }
+
+/* ---------- paper reveal ---------- */
+
+.paper {
+  position: relative;
+  margin-top: 10px;
+  padding: 18px 20px;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(28px) scale(0.96);
+  transition: transform 0.5s ease 0.25s, opacity 0.45s ease 0.25s;
+}
+
+.folder.is-open .paper {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.paper-v1 { background-image: url("assets/paper1.png"); }
+.paper-v2 { background-image: url("assets/paper2.png"); }
+.paper-v3 { background-image: url("assets/paper3.png"); }
 
 .media-slot {
   background: rgba(253, 250, 243, 0.92);
@@ -251,12 +277,13 @@ body {
 }
 
 .response-text {
-  background: #fffef8;
-  border: 1px solid #d8c9a3;
-  border-radius: 4px;
-  padding: 10px 12px;
-  margin: 10px 0 0;
-  color: #4a3a22;
-  font-size: 14px;
-  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.12);
+  font-family: "Patrick Hand", cursive;
+  color: #2a3550;
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.response-text:last-child {
+  margin-bottom: 0;
 }
