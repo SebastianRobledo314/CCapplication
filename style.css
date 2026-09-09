@@ -136,7 +136,6 @@ body {
 }
 
 .folder-tilt {
-  perspective: 1200px;
   transform: rotate(var(--rot, 0deg));
   transition: transform 0.3s ease;
 }
@@ -167,10 +166,8 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   filter: var(--folder-filter, none);
-  transition: transform 0.6s ease, filter 0.3s ease, opacity 0.5s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
   transform-origin: top center;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
 }
 
 .folder--b .folder-cover,
@@ -196,8 +193,7 @@ body {
 }
 
 .folder.is-open .folder-cover {
-  transform: rotateX(-115deg) translateY(-10px);
-  opacity: 0.85;
+  transform: rotateX(-20deg) translateY(-4px);
 }
 
 /* ---------- folder color variants (tint the same closed-folder photo) ---------- */
@@ -222,7 +218,7 @@ body {
   background-image: var(--backdrop-img, none);
   background-size: cover;
   background-position: center;
-  transition: max-height 0.5s ease 0.2s, opacity 0.4s ease 0.35s, margin-top 0.5s ease 0.2s;
+  transition: max-height 0.45s ease, opacity 0.35s ease 0.05s, margin-top 0.45s ease;
 }
 
 .folder.is-open .folder-inside {
