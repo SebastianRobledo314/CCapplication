@@ -27,6 +27,8 @@ const responseFolders = [
 ]
   .map((id) => document.getElementById(id)?.closest(".folder"))
   .filter(Boolean);
+const finalVideoFolder = document.getElementById("content-video")?.closest(".folder");
+const finalVideo = document.getElementById("final-video");
 const shuffleSounds = [
   new Audio("card%20shuffle%201.mp3"),
   new Audio("Card%20shuffle%202.mp3"),
@@ -54,6 +56,10 @@ function openFolder(folder) {
     catSound.playbackRate = pitches[Math.floor(Math.random() * pitches.length)];
     catSound.play();
   }
+  if (folder === finalVideoFolder && finalVideo) {
+    finalVideo.currentTime = 0;
+    finalVideo.play().catch(() => {});
+  }
   if (responseFolders.includes(folder)) {
     playShuffleSound();
   }
@@ -70,6 +76,10 @@ function closeFolder(folder) {
   if (catSoundFolders.includes(folder)) {
     catSound.pause();
     catSound.currentTime = 0;
+  }
+  if (folder === finalVideoFolder && finalVideo) {
+    finalVideo.pause();
+    finalVideo.currentTime = 0;
   }
   if (responseFolders.includes(folder)) {
     playShuffleSound();
