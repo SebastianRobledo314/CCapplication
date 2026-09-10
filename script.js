@@ -42,6 +42,8 @@ function playShuffleSound() {
 function openFolder(folder) {
   folder.classList.add("is-open");
   folder.querySelector(".folder-cover").setAttribute("aria-expanded", "true");
+  const inside = folder.querySelector(".folder-inside");
+  inside.style.maxHeight = inside.scrollHeight + "px";
   if (folder === leonFolder) {
     leonSound.currentTime = 0;
     leonSound.play();
@@ -60,6 +62,7 @@ function openFolder(folder) {
 function closeFolder(folder) {
   folder.classList.remove("is-open");
   folder.querySelector(".folder-cover").setAttribute("aria-expanded", "false");
+  folder.querySelector(".folder-inside").style.maxHeight = "0px";
   if (folder === leonFolder) {
     leonSound.pause();
     leonSound.currentTime = 0;
