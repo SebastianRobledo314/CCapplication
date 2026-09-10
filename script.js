@@ -100,3 +100,172 @@ document.querySelectorAll(".folder-inside").forEach((inside) => {
     closeFolder(folder);
   });
 });
+
+/* ---------- record player ---------- */
+
+const recordPlayer = document.getElementById("record-player");
+const recordDisc = document.getElementById("record-disc");
+const songPicker = document.getElementById("song-picker");
+
+// Add a sample clip path once you have one; the bubble still works (silently) without it.
+const tracks = [
+  { cover: "KIDs.jpeg", src: "the_spins.mp3", label: "The Spins" },
+  { cover: "AFD.jpeg", src: "my_mitchelle.mp3", label: "My Michelle" },
+  { cover: "aintno.jpeg", src: "aintno.mp3", label: "Ain't No Mountain High Enough" },
+];
+
+tracks.forEach((track, index) => {
+  const bubble = document.createElement("button");
+  bubble.className = "song-bubble";
+  bubble.style.backgroundImage = `url('${track.cover}')`;
+  bubble.setAttribute("aria-label", `Play ${track.label} sample`);
+  bubble.addEventListener("click", (e) => {
+    e.stopPropagation();
+    selectTrack(index);
+  });
+  songPicker.appendChild(bubble);
+});
+
+let currentAudio = null;
+let isPlaying = false;
+let isDragging = false;
+let didDrag = false;
+let rotation = 0;
+let lastAngle = 0;
+let spinFrameId = null;
+
+function setRotation(deg) {
+  rotation = deg;
+  recordDisc.style.transform = `rotate(${deg}deg)`;
+}
+
+function spinStep() {
+  if (isPlaying && !isDragging) {
+    setRotation(rotation + 2.4);
+    spinFrameId = requestAnimationFrame(spinStep);
+  } else {
+    spinFrameId = null;
+  }
+}
+
+function startSpin() {
+  if (spinFrameId === null) {
+    spinFrameId = requestAnimationFrame(spinStep);
+  }
+}
+
+function openPicker() {
+  songPicker.classList.add("is-open");
+  songPicker.setAttribute("aria-hidden", "false");
+}
+
+function closePicker() {
+  songPicker.classList.remove("is-open");
+  songPicker.setAttribute("aria-hidden", "true");
+}
+
+function selectTrack(index) {
+  const track = tracks[index];
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  if (track.src) {
+    currentAudio = new Audio(track.src);
+    currentAudio.addEventListener("ended", () => {
+      stopSong();
+    });
+    currentAudio.play().catch(() => {});
+  }
+  isPlaying = true;
+  recordPlayer.setAttribute("aria-pressed", "true");
+  startSpin();
+  closePicker();
+}
+
+function stopSong() {
+  if (currentAudio) {
+    currentAudio.pause();
+  }
+  isPlaying = false;
+  recordPlayer.setAttribute("aria-pressed", "false");
+}
+
+function angleFromCenter(clientX, clientY) {
+  const rect = recordPlayer.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  return Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+}
+
+function normalizeAngleDelta(delta) {
+  let normalized = delta;
+  while (normalized > 180) normalized -= 360;
+  while (normalized < -180) normalized += 360;
+  return normalized;
+}
+
+recordPlayer.addEventListener("pointerdown", (e) => {
+  isDragging = true;
+  didDrag = false;
+  lastAngle = angleFromCenter(e.clientX, e.clientY);
+  recordPlayer.setPointerCapture(e.pointerId);
+  if (currentAudio) currentAudio.pause();
+  e.preventDefault();
+});
+
+recordPlayer.addEventListener("pointermove", (e) => {
+  if (!isDragging) return;
+  const angle = angleFromCenter(e.clientX, e.clientY);
+  const delta = normalizeAngleDelta(angle - lastAngle);
+  if (Math.abs(delta) > 0.5) didDrag = true;
+  lastAngle = angle;
+  setRotation(rotation + delta);
+
+  if (currentAudio && !isNaN(currentAudio.duration)) {
+    const scrubSeconds = delta / 90;
+    const next = currentAudio.currentTime + scrubSeconds;
+    currentAudio.currentTime = Math.min(Math.max(next, 0), currentAudio.duration);
+    currentAudio.play().catch(() => {});
+  }
+});
+
+function endDrag() {
+  if (!isDragging) return;
+  isDragging = false;
+  if (isPlaying) {
+    if (currentAudio) currentAudio.play().catch(() => {});
+    startSpin();
+  }
+}
+
+recordPlayer.addEventListener("pointerup", endDrag);
+recordPlayer.addEventListener("pointercancel", endDrag);
+
+recordPlayer.addEventListener("click", () => {
+  if (didDrag) {
+    didDrag = false;
+    return;
+  }
+  if (isPlaying) {
+    stopSong();
+    closePicker();
+  } else if (songPicker.classList.contains("is-open")) {
+    closePicker();
+  } else {
+    openPicker();
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (!songPicker.contains(e.target) && !recordPlayer.contains(e.target)) {
+    closePicker();
+  }
+});
+
+recordPlayer.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    recordPlayer.click();
+  }
+});
