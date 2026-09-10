@@ -23,7 +23,7 @@ body {
   background-size: 1000px 562px;
   background-repeat: repeat;
   background-attachment: fixed;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .board::before {
@@ -58,6 +58,10 @@ body {
 .pos-7     { --top: 810px; --left: 58%; --rot: -13deg; }
 .pos-8     { --top: 720px; --left: 82%; --rot: 8deg; }
 .pos-video { --top: 1080px; --left: 50%; --rot: -2deg; }
+.pos-cat1  { --top: 15px; --left: 6%; --rot: -12deg; }
+.pos-cat2  { --top: 330px; --left: 66%; --rot: 8deg; }
+.pos-cat3  { --top: 640px; --left: 40%; --rot: -6deg; }
+.pos-cat4  { --top: 1400px; --left: 88%; --rot: 10deg; }
 
 @media (min-width: 760px) {
   .field {
@@ -145,6 +149,7 @@ body {
   transform: rotate(0deg);
 }
 
+.folder--xs { width: 110px; }
 .folder--sm { width: 170px; }
 .folder--md { width: 210px; }
 .folder--xl { width: 310px; }
@@ -193,8 +198,20 @@ body {
   font-size: clamp(16px, 3vw, 24px);
 }
 
+.folder--xs .folder-label {
+  font-size: 12px;
+}
+
 .folder.is-open .folder-cover {
   transform: rotateX(-20deg) translateY(-4px);
+}
+
+.cat-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 /* ---------- folder color variants (tint the same closed-folder photo) ---------- */
@@ -210,22 +227,25 @@ body {
 /* ---------- inside content ---------- */
 
 .folder-inside {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 92%;
+  transform: translateX(-50%);
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  margin-top: 0;
   padding: 0 10px;
   border-radius: 4px;
   background-image: var(--backdrop-img, none);
   background-size: cover;
   background-position: center;
-  transition: max-height 0.45s ease, opacity 0.35s ease 0.05s, margin-top 0.45s ease;
+  transition: max-height 0.45s ease, opacity 0.35s ease 0.05s;
 }
 
 .folder.is-open .folder-inside {
   max-height: 2200px;
   opacity: 1;
-  margin-top: 14px;
   padding: 12px 10px;
 }
 
@@ -239,6 +259,7 @@ body {
   margin-top: 10px;
   padding: 18px 20px;
   border-radius: 3px;
+  cursor: pointer;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
